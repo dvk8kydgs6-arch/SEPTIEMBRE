@@ -19,6 +19,44 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            position: relative;
+        }
+
+        /* Contenedor de lirios de fondo ambientales */
+        #bg-lilies-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-ambient-lily {
+            position: absolute;
+            bottom: -150px;
+            opacity: 0.12;
+            filter: blur(1px);
+            animation: floatUp 18s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.12;
+            }
+            85% {
+                opacity: 0.12;
+            }
+            100% {
+                transform: translateY(-115vh) rotate(180deg);
+                opacity: 0;
+            }
         }
 
         /* Pantalla de Bienvenida con Sobre */
@@ -70,7 +108,7 @@
             50% { opacity: 1; }
         }
 
-        /* Animación de Lirios Volando Masivos */
+        /* Animación de Lirios Volando Masivos (Al abrir el sobre) */
         .flying-lily {
             position: fixed;
             pointer-events: none;
@@ -105,12 +143,14 @@
             gap: 50px;
             opacity: 0;
             transition: opacity 2.2s ease;
+            position: relative;
+            z-index: 1;
         }
         #main-content.visible {
             opacity: 1;
         }
 
-        /* Carta estilo papel elegante con alta definición y sombra destacada */
+        /* Carta */
         .letter-section {
             background: #ffffff;
             border: 2px solid #f48fb1;
@@ -263,6 +303,9 @@
 </head>
 <body>
 
+    <!-- Contenedor para lirios continuos de fondo -->
+    <div id="bg-lilies-container"></div>
+
     <!-- Pantalla de bienvenida con sobre -->
     <div id="intro-screen">
         <div class="envelope-container" onclick="openEnvelope()">
@@ -393,6 +436,36 @@
 
     <script>
         const lilies = ['Lirio.PNG', 'Lirio1.PNG', 'Lirio2.PNG', 'Lirio3.PNG', 'Lirio4.PNG', 'Lirio5.PNG'];
+
+        // Iniciar lirios sutiles de fondo continuo
+        function initBackgroundLilies() {
+            const bgContainer = document.getElementById('bg-lilies-container');
+            
+            // Genera lirios espaciados suavemente
+            setInterval(() => {
+                const img = document.createElement('img');
+                const randomLily = lilies[Math.floor(Math.random() * lilies.length)];
+                img.src = randomLily;
+                img.className = 'bg-ambient-lily';
+                
+                // Tamaño grande pero opacidad muy tenue
+                const size = 120 + Math.random() * 100;
+                img.style.width = size + 'px';
+                img.style.left = Math.random() * 90 + 'vw';
+                
+                // Variación sutil de velocidad
+                const duration = 16 + Math.random() * 8;
+                img.style.animationDuration = duration + 's';
+
+                bgContainer.appendChild(img);
+
+                setTimeout(() => {
+                    img.remove();
+                }, duration * 1000);
+            }, 2500);
+        }
+
+        initBackgroundLilies();
 
         function openEnvelope() {
             const intro = document.getElementById('intro-screen');
