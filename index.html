@@ -22,6 +22,57 @@
             position: relative;
         }
 
+        /* Reproductor Flotante que baja con la página (Absolute) */
+        #music-player-widget {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border: 2px solid #f48fb1;
+            border-radius: 30px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 25px rgba(216, 27, 96, 0.18);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 1.5s ease 2.5s, transform 1.5s ease 2.5s;
+        }
+        #music-player-widget.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .play-btn {
+            background: #ec407a;
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(236, 64, 122, 0.3);
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+        .play-btn:hover {
+            transform: scale(1.08);
+            background: #d81b60;
+        }
+
+        .song-name-display {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #880e4f;
+            white-space: nowrap;
+        }
+
         /* Contenedor de lirios de fondo ambientales */
         #bg-lilies-container {
             position: fixed;
@@ -108,7 +159,7 @@
             50% { opacity: 1; }
         }
 
-        /* Animación de Lirios Volando Masivos (Al abrir el sobre) */
+        /* Animación de Lirios Volando Masivos */
         .flying-lily {
             position: fixed;
             pointer-events: none;
@@ -173,110 +224,6 @@
             font-size: 1.1rem;
             color: #4a2e35;
             white-space: pre-line;
-        }
-
-        /* Reproductor de Audio Pastel */
-        .custom-player-container {
-            margin-top: 35px;
-            background: linear-gradient(135deg, #fff0f5 0%, #fce4ec 100%);
-            border: 2px solid #f8bbd0;
-            border-radius: 20px;
-            padding: 18px 25px;
-            box-shadow: 0 8px 20px rgba(233, 30, 99, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .player-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            color: #c2185b;
-            font-size: 0.95rem;
-            font-weight: bold;
-        }
-        .player-controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .play-btn {
-            background: #ec407a;
-            color: white;
-            border: none;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 12px rgba(236, 64, 122, 0.35);
-            transition: transform 0.2s ease, background-color 0.2s ease;
-            flex-shrink: 0;
-        }
-        .play-btn:hover {
-            transform: scale(1.08);
-            background: #d81b60;
-        }
-        .progress-wrapper {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            -webkit-appearance: none;
-            appearance: none;
-            background: #f48fb1;
-            border-radius: 6px;
-            outline: none;
-            cursor: pointer;
-        }
-        .progress-bar::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: #d81b60;
-            cursor: pointer;
-            box-shadow: 0 0 6px rgba(0,0,0,0.15);
-        }
-        .time-display {
-            font-size: 0.75rem;
-            color: #880e4f;
-            display: flex;
-            justify-content: space-between;
-        }
-        .volume-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #c2185b;
-            font-size: 0.9rem;
-        }
-        .volume-bar {
-            width: 70px;
-            height: 5px;
-            -webkit-appearance: none;
-            appearance: none;
-            background: #f48fb1;
-            border-radius: 5px;
-            outline: none;
-            cursor: pointer;
-        }
-        .volume-bar::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #d81b60;
-            cursor: pointer;
         }
 
         /* Sección Música */
@@ -407,10 +354,14 @@
 </head>
 <body>
 
-    <!-- Audio Element -->
-    <audio id="bg-audio" loop>
-        <source src="Yo siempre contesto.mp3" type="audio/mpeg">
-    </audio>
+    <!-- Elemento de Audio de Fondo (Nombre exacto del archivo) -->
+    <audio id="bg-audio" loop src="Love is in the Air, Pt. 1.mp3"></audio>
+
+    <!-- Reproductor Flotante en esquina (se mueve con el scroll) -->
+    <div id="music-player-widget">
+        <button class="play-btn" id="play-pause-btn" onclick="toggleAudio()">▶</button>
+        <span class="song-name-display">Love is in the Air</span>
+    </div>
 
     <!-- Contenedor para lirios continuos de fondo -->
     <div id="bg-lilies-container"></div>
@@ -436,28 +387,6 @@
 
                 En la parte de abajo dejé algunas películas. Aunque al momento de escribir esto aún me faltaba ver algunas, si ya están en la lista es porque las vi y definitivamente creo que son nuestras. Espero que, al igual que a mí, te provoquen un bonito sentimiento.
             </div>
-
-            <!-- Reproductor de Audio Integrado -->
-            <div class="custom-player-container">
-                <div class="player-header">
-                    <span>🎵 Yo siempre contesto</span>
-                    <span>♡</span>
-                </div>
-                <div class="player-controls">
-                    <button class="play-btn" id="play-btn" onclick="togglePlay()">▶</button>
-                    <div class="progress-wrapper">
-                        <input type="range" class="progress-bar" id="progress-bar" value="0" min="0" step="0.1" onchange="seekAudio()">
-                        <div class="time-display">
-                            <span id="current-time">0:00</span>
-                            <span id="duration-time">0:00</span>
-                        </div>
-                    </div>
-                    <div class="volume-wrapper">
-                        <span>🔊</span>
-                        <input type="range" class="volume-bar" id="volume-bar" value="80" min="0" max="100" oninput="setVolume()">
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Sección Música -->
@@ -474,11 +403,11 @@
                 </a>
                 <a href="https://www.youtube.com/results?search_query=Like+You+Do+Joji" target="_blank" class="song-card">
                     <img src="Joji .JPG" class="song-cover" alt="Like You Do">
-                    <div class="song-title">Like You Do - Joji</div>
+                    <div class="song-title">Like You Do</div>
                 </a>
                 <a href="https://www.youtube.com/results?search_query=Birdie+Leon+Larregui" target="_blank" class="song-card">
                     <img src="Birdie.JPG" class="song-cover" alt="Birdie">
-                    <div class="song-title">Birdie - León Larregui</div>
+                    <div class="song-title">Birdie</div>
                 </a>
                 <a href="https://www.youtube.com/results?search_query=Electric+Love" target="_blank" class="song-card">
                     <img src="Electriclove .JPG" class="song-cover" alt="Electric Love">
@@ -490,15 +419,15 @@
                 </a>
                 <a href="https://www.youtube.com/results?search_query=Lejos+de+ti+The+Marias" target="_blank" class="song-card">
                     <img src="Themarias .JPG" class="song-cover" alt="Lejos de ti">
-                    <div class="song-title">Lejos de Ti - The Marías</div>
+                    <div class="song-title">Lejos de Ti</div>
                 </a>
                 <a href="https://www.youtube.com/results?search_query=Imagination+Foster+the+People" target="_blank" class="song-card">
-                    <img src="Inagination .JPG" class="song-cover" alt="Imaginación">
-                    <div class="song-title">Imaginación - Foster the People</div>
+                    <img src="Inagination .JPG" class="song-cover" alt="Imagination">
+                    <div class="song-title">IMAGINATION</div>
                 </a>
                 <a href="https://www.youtube.com/results?search_query=Neo+Romeo" target="_blank" class="song-card">
-                    <img src="Neo Romeo.JPG" class="song-cover" alt="Neo Romeo">
-                    <div class="song-title">Neo Romeo</div>
+                    <img src="Neo Romeo.JPG" class="song-cover" alt="NEO RONEO">
+                    <div class="song-title">NEO RONEO</div>
                 </a>
             </div>
         </div>
@@ -568,15 +497,24 @@
     <script>
         const lilies = ['Lirio.PNG', 'Lirio1.PNG', 'Lirio2.PNG', 'Lirio3.PNG', 'Lirio4.PNG', 'Lirio5.PNG'];
         const audio = document.getElementById('bg-audio');
-        const playBtn = document.getElementById('play-btn');
-        const progressBar = document.getElementById('progress-bar');
-        const currentTimeEl = document.getElementById('current-time');
-        const durationTimeEl = document.getElementById('duration-time');
-        const volumeBar = document.getElementById('volume-bar');
+        const playBtn = document.getElementById('play-pause-btn');
 
-        // Lirios de fondo
+        // Control de Reproducción/Pausa
+        function toggleAudio() {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    playBtn.innerText = '❚❚';
+                }).catch(e => console.log("Error al reproducir:", e));
+            } else {
+                audio.pause();
+                playBtn.innerText = '▶';
+            }
+        }
+
+        // Lirios continuos de fondo
         function initBackgroundLilies() {
             const bgContainer = document.getElementById('bg-lilies-container');
+            
             setInterval(() => {
                 const img = document.createElement('img');
                 const randomLily = lilies[Math.floor(Math.random() * lilies.length)];
@@ -603,22 +541,29 @@
         function openEnvelope() {
             const intro = document.getElementById('intro-screen');
             const main = document.getElementById('main-content');
+            const widget = document.getElementById('music-player-widget');
 
-            // Iniciar Audio al abrir sobre
+            // Intentar reproducir la música de fondo al abrir el sobre
             audio.volume = 0.8;
             audio.play().then(() => {
                 playBtn.innerText = '❚❚';
-            }).catch(e => console.log('Autoplay prevenido:', e));
+            }).catch(e => {
+                console.log("Autoplay bloqueado o archivo no encontrado:", e);
+                playBtn.innerText = '▶';
+            });
 
-            // Ráfaga masiva de lirios
+            // 1. Lanzar ráfaga masiva de 120 lirios
             for (let i = 0; i < 120; i++) {
                 setTimeout(() => {
                     createLily();
                 }, i * 20);
             }
 
+            // 2. Ocultar el sobre y mostrar el reproductor
             intro.classList.add('hidden');
+            widget.classList.add('visible');
 
+            // 3. Pausa para los lirios antes de mostrar el contenido
             setTimeout(() => {
                 main.classList.add('visible');
             }, 2800);
@@ -655,40 +600,6 @@
             setTimeout(() => {
                 img.remove();
             }, 4500);
-        }
-
-        // Lógica del Reproductor de Audio
-        function togglePlay() {
-            if (audio.paused) {
-                audio.play();
-                playBtn.innerText = '❚❚';
-            } else {
-                audio.pause();
-                playBtn.innerText = '▶';
-            }
-        }
-
-        audio.addEventListener('timeupdate', () => {
-            if (audio.duration) {
-                progressBar.max = audio.duration;
-                progressBar.value = audio.currentTime;
-                currentTimeEl.innerText = formatTime(audio.currentTime);
-                durationTimeEl.innerText = formatTime(audio.duration);
-            }
-        });
-
-        function seekAudio() {
-            audio.currentTime = progressBar.value;
-        }
-
-        function setVolume() {
-            audio.volume = volumeBar.value / 100;
-        }
-
-        function formatTime(seconds) {
-            const min = Math.floor(seconds / 60);
-            const sec = Math.floor(seconds % 60);
-            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
         }
     </script>
 </body>
