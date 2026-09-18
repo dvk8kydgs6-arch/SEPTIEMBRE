@@ -68,12 +68,12 @@
             50% { opacity: 1; }
         }
 
-        /* Animación de Lirios Volando */
+        /* Animación de Lirios Volando Gigantes y Masivos */
         .flying-lily {
             position: fixed;
             pointer-events: none;
-            z-index: 99;
-            animation: fly 5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            z-index: 999;
+            animation: fly 4.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
 
         @keyframes fly {
@@ -82,18 +82,18 @@
                 opacity: 0;
             }
             15% {
-                opacity: 1;
+                opacity: 0.95;
             }
-            80% {
-                opacity: 0.8;
+            75% {
+                opacity: 0.85;
             }
             100% {
-                transform: translate(var(--dx), var(--dy)) scale(1.3) rotate(var(--rot));
+                transform: translate(var(--dx), var(--dy)) scale(var(--scale)) rotate(var(--rot));
                 opacity: 0;
             }
         }
 
-        /* Contenido Principal */
+        /* Contenido Principal con retardo */
         #main-content {
             width: 100%;
             max-width: 800px;
@@ -102,7 +102,7 @@
             flex-direction: column;
             gap: 60px;
             opacity: 0;
-            transition: opacity 2s ease 1s;
+            transition: opacity 2.2s ease;
         }
         #main-content.visible {
             opacity: 1;
@@ -141,23 +141,24 @@
         .bg-decor {
             position: absolute;
             pointer-events: none;
-            opacity: 0.6;
+            opacity: 0.85;
             z-index: 1;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
         }
         .decor-manos {
-            top: -10px;
-            right: -10px;
-            width: 130px;
+            top: 10px;
+            right: 10px;
+            width: 120px;
             border-radius: 8px;
         }
         .decor-general {
-            bottom: -10px;
-            left: -10px;
-            width: 130px;
+            bottom: 10px;
+            left: 10px;
+            width: 120px;
             border-radius: 8px;
         }
 
-        /* Sección Música (Cassette) */
+        /* Sección Música */
         .music-section {
             text-align: center;
         }
@@ -170,13 +171,17 @@
         }
         .cassette-wrapper {
             margin: 0 auto 30px;
-            max-width: 240px;
-            background: transparent;
+            max-width: 250px;
+            background: #ffffff;
+            padding: 6px;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+            overflow: hidden;
         }
         .cassette-img {
             width: 100%;
-            mix-blend-mode: screen;
-            filter: contrast(1.1) brightness(0.9);
+            display: block;
+            border-radius: 8px;
         }
         .songs-grid {
             display: grid;
@@ -413,14 +418,20 @@
             const intro = document.getElementById('intro-screen');
             const main = document.getElementById('main-content');
 
-            for (let i = 0; i < 45; i++) {
+            // 1. Lanzar ráfaga masiva de 120 lirios
+            for (let i = 0; i < 120; i++) {
                 setTimeout(() => {
                     createLily();
-                }, i * 40);
+                }, i * 20);
             }
 
+            // 2. Ocultar el sobre primero
             intro.classList.add('hidden');
-            main.classList.add('visible');
+
+            // 3. Pausa a los lirios antes de mostrar el contenido
+            setTimeout(() => {
+                main.classList.add('visible');
+            }, 2800);
         }
 
         function createLily() {
@@ -436,21 +447,25 @@
             img.style.top = startY + 'px';
 
             const angle = Math.random() * Math.PI * 2;
-            const distance = 200 + Math.random() * 450;
+            const distance = 300 + Math.random() * 600; 
             const dx = Math.cos(angle) * distance + 'px';
             const dy = Math.sin(angle) * distance + 'px';
-            const rot = (Math.random() - 0.5) * 540 + 'deg';
+            const rot = (Math.random() - 0.5) * 720 + 'deg';
+            const scale = (1.2 + Math.random() * 2.2).toFixed(2);
 
             img.style.setProperty('--dx', dx);
             img.style.setProperty('--dy', dy);
             img.style.setProperty('--rot', rot);
-            img.style.width = (35 + Math.random() * 55) + 'px';
+            img.style.setProperty('--scale', scale);
+
+            // Tamaños variables para cubrir mejor la pantalla
+            img.style.width = (60 + Math.random() * 160) + 'px';
 
             document.body.appendChild(img);
 
             setTimeout(() => {
                 img.remove();
-            }, 5000);
+            }, 4500);
         }
     </script>
 </body>
