@@ -1,1 +1,443 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>21 de Septiembre</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #0d0d11;
+            color: #e0e0e0;
+            font-family: 'Georgia', serif;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Pantalla de Bienvenida con Sobre */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle, #1a1625 0%, #09080d 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 1.5s ease, visibility 1.5s ease;
+        }
+        #intro-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .envelope-container {
+            position: relative;
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .envelope-container:hover {
+            transform: scale(1.05);
+        }
+        .envelope-img {
+            max-width: 260px;
+            width: 70vw;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));
+        }
+        .tap-hint {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            color: #b3a2c7;
+            text-transform: uppercase;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* Animación de Lirios Volando */
+        .flying-lily {
+            position: fixed;
+            pointer-events: none;
+            z-index: 99;
+            animation: fly 3s ease-out forwards;
+        }
+
+        @keyframes fly {
+            0% {
+                transform: translate(0, 0) scale(0.3) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--dx), var(--dy)) scale(1.2) rotate(var(--rot));
+                opacity: 0;
+            }
+        }
+
+        /* Contenido Principal */
+        #main-content {
+            width: 100%;
+            max-width: 800px;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            opacity: 0;
+            transition: opacity 2s ease 1s;
+        }
+        #main-content.visible {
+            opacity: 1;
+        }
+
+        /* Carta */
+        .letter-section {
+            background: linear-gradient(145deg, #16151d, #1c1a26);
+            border: 1px solid #2a2638;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .letter-title {
+            font-size: 1.5rem;
+            color: #d4af37;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+        .letter-body {
+            line-height: 1.8;
+            font-size: 1.05rem;
+            color: #c8c5d3;
+            white-space: pre-line;
+        }
+
+        /* Decoraciones de fondo con opacidad baja */
+        .bg-decor {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.25;
+            z-index: 0;
+        }
+        .decor-manos {
+            top: -20px;
+            right: -20px;
+            width: 140px;
+            border-radius: 8px;
+        }
+        .decor-general {
+            bottom: -20px;
+            left: -20px;
+            width: 140px;
+            border-radius: 8px;
+        }
+
+        /* Sección Música (Cassette) */
+        .music-section {
+            text-align: center;
+        }
+        .section-title {
+            font-size: 1.3rem;
+            color: #b3a2c7;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .cassette-wrapper {
+            margin: 0 auto 30px;
+            max-width: 220px;
+        }
+        .cassette-img {
+            width: 100%;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.6));
+        }
+        .songs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 20px;
+        }
+        .song-card {
+            background: #14131a;
+            border: 1px solid #252233;
+            border-radius: 8px;
+            padding: 12px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+        .song-card:hover {
+            transform: translateY(-5px);
+            border-color: #6a5acd;
+        }
+        .song-cover {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        .song-title {
+            font-size: 0.9rem;
+            color: #e0e0e0;
+            font-weight: bold;
+        }
+
+        /* Sección Películas */
+        .movies-section {
+            text-align: center;
+        }
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+        }
+        .movie-card {
+            position: relative;
+            aspect-ratio: 2/3;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .movie-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        .movie-card:hover .movie-inner, .movie-card.flipped .movie-inner {
+            transform: rotateY(180deg);
+        }
+        .movie-front, .movie-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #2a2638;
+        }
+        .movie-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .movie-back {
+            background: #191724;
+            color: #d4af37;
+            transform: rotateY(180deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 30px;
+            font-size: 0.8rem;
+            color: #555;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Pantalla de bienvenida con sobre -->
+    <div id="intro-screen">
+        <div class="envelope-container" onclick="openEnvelope()">
+            <img src="SOBRE.PNG" alt="Sobre" class="envelope-img">
+            <div class="tap-hint">Toca para abrir</div>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div id="main-content">
+        
+        <!-- Sección Carta -->
+        <div class="letter-section">
+            <img src="Manos.PNG" class="bg-decor decor-manos" alt="Decoración manos">
+            <img src="Decoración .PNG" class="bg-decor decor-general" alt="Decoración">
+
+            <h1 class="letter-title">21 de Septiembre</h1>
+            <div class="letter-body">
+                Hay fechas que no necesitan ruido para sentirse presentes. 
+                Aunque el tiempo o la distancia tengan su propio curso, quería dejarte este pequeño espacio en silencio.
+
+                Sin presiones, sin expectativas. Solo un recordatorio sincero de lo que permanece guardado con respeto y aprecio.
+            </div>
+        </div>
+
+        <!-- Sección Música -->
+        <div class="music-section">
+            <h2 class="section-title">Canciones</h2>
+            <div class="cassette-wrapper">
+                <img src="Cassate.JPG" alt="Cassette" class="cassette-img">
+            </div>
+
+            <div class="songs-grid">
+                <div class="song-card">
+                    <img src="Yosiempre.JPG" class="song-cover" alt="Yo siempre contesto">
+                    <div class="song-title">Yo siempre contesto</div>
+                </div>
+                <div class="song-card">
+                    <img src="Joji .JPG" class="song-cover" alt="Like You Do">
+                    <div class="song-title">Like You Do - Joji</div>
+                </div>
+                <div class="song-card">
+                    <img src="Birdie.JPG" class="song-cover" alt="Birdie">
+                    <div class="song-title">Birdie - León Larregui</div>
+                </div>
+                <div class="song-card">
+                    <img src="Electriclove .JPG" class="song-cover" alt="Electric Love">
+                    <div class="song-title">Electric Love</div>
+                </div>
+                <div class="song-card">
+                    <img src="Yellow.JPG" class="song-cover" alt="Yellow">
+                    <div class="song-title">Yellow</div>
+                </div>
+                <div class="song-card">
+                    <img src="Themarias .JPG" class="song-cover" alt="Lejos de ti">
+                    <div class="song-title">Lejos de Ti - The Marías</div>
+                </div>
+                <div class="song-card">
+                    <img src="Inagination .JPG" class="song-cover" alt="Imaginación">
+                    <div class="song-title">Imaginación - Foster the People</div>
+                </div>
+                <div class="song-card">
+                    <img src="Neo Romeo.JPG" class="song-cover" alt="Neo Romeo">
+                    <div class="song-title">Neo Romeo</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Películas -->
+        <div class="movies-section">
+            <h2 class="section-title">Películas</h2>
+            <div class="movies-grid">
+                
+                <!-- UP -->
+                <div class="movie-card" onclick="this.classList.toggle('flipped')">
+                    <div class="movie-inner">
+                        <div class="movie-front">
+                            <img src="UP.JPG" alt="UP">
+                        </div>
+                        <div class="movie-back">
+                            "Hagamos nuestro libro de aventuras"
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bright -->
+                <div class="movie-card" onclick="this.classList.toggle('flipped')">
+                    <div class="movie-inner">
+                        <div class="movie-front">
+                            <img src="Allthebrigth.JPG" alt="All the Bright Places">
+                        </div>
+                        <div class="movie-back">
+                            "Eres todos los colores en uno, a toda intensidad"
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notebook -->
+                <div class="movie-card" onclick="this.classList.toggle('flipped')">
+                    <div class="movie-inner">
+                        <div class="movie-front">
+                            <img src="Notebook.JPG" alt="The Notebook">
+                        </div>
+                        <div class="movie-back">
+                            "Te extraño"
+                        </div>
+                    </div>
+                </div>
+
+                <!-- La La Land -->
+                <div class="movie-card" onclick="this.classList.toggle('flipped')">
+                    <div class="movie-inner">
+                        <div class="movie-front">
+                            <img src="lalaland.JPG" alt="La La Land">
+                        </div>
+                        <div class="movie-back">
+                            "Yo no quiero este final"
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <footer>
+            ✦
+        </footer>
+
+    </div>
+
+    <script>
+        const lilies = ['Lirio.PNG', 'Lirio1.PNG', 'Lirio2.PNG', 'Lirio3.PNG', 'Lirio4.PNG', 'Lirio5.PNG'];
+
+        function openEnvelope() {
+            const intro = document.getElementById('intro-screen');
+            const main = document.getElementById('main-content');
+
+            // Crear explosión de lirios
+            for (let i = 0; i < 15; i++) {
+                createLily();
+            }
+
+            // Ocultar pantalla inicial y mostrar contenido
+            intro.classList.add('hidden');
+            main.classList.add('visible');
+        }
+
+        function createLily() {
+            const img = document.createElement('img');
+            const randomLily = lilies[Math.floor(Math.random() * lilies.length)];
+            img.src = randomLily;
+            img.className = 'flying-lily';
+
+            const startX = window.innerWidth / 2;
+            const startY = window.innerHeight / 2;
+
+            img.style.left = startX + 'px';
+            img.style.top = startY + 'px';
+
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 150 + Math.random() * 300;
+            const dx = Math.cos(angle) * distance + 'px';
+            const dy = Math.sin(angle) * distance + 'px';
+            const rot = (Math.random() - 0.5) * 360 + 'deg';
+
+            img.style.setProperty('--dx', dx);
+            img.style.setProperty('--dy', dy);
+            img.style.setProperty('--rot', rot);
+            img.style.width = (40 + Math.random() * 40) + 'px';
+
+            document.body.appendChild(img);
+
+            setTimeout(() => {
+                img.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
