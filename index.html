@@ -175,6 +175,110 @@
             white-space: pre-line;
         }
 
+        /* Reproductor de Audio Pastel */
+        .custom-player-container {
+            margin-top: 35px;
+            background: linear-gradient(135deg, #fff0f5 0%, #fce4ec 100%);
+            border: 2px solid #f8bbd0;
+            border-radius: 20px;
+            padding: 18px 25px;
+            box-shadow: 0 8px 20px rgba(233, 30, 99, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .player-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #c2185b;
+            font-size: 0.95rem;
+            font-weight: bold;
+        }
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .play-btn {
+            background: #ec407a;
+            color: white;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(236, 64, 122, 0.35);
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            flex-shrink: 0;
+        }
+        .play-btn:hover {
+            transform: scale(1.08);
+            background: #d81b60;
+        }
+        .progress-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #f48fb1;
+            border-radius: 6px;
+            outline: none;
+            cursor: pointer;
+        }
+        .progress-bar::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #d81b60;
+            cursor: pointer;
+            box-shadow: 0 0 6px rgba(0,0,0,0.15);
+        }
+        .time-display {
+            font-size: 0.75rem;
+            color: #880e4f;
+            display: flex;
+            justify-content: space-between;
+        }
+        .volume-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #c2185b;
+            font-size: 0.9rem;
+        }
+        .volume-bar {
+            width: 70px;
+            height: 5px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #f48fb1;
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+        .volume-bar::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #d81b60;
+            cursor: pointer;
+        }
+
         /* Sección Música */
         .music-section {
             text-align: center;
@@ -303,6 +407,11 @@
 </head>
 <body>
 
+    <!-- Audio Element -->
+    <audio id="bg-audio" loop>
+        <source src="Yo siempre contesto.mp3" type="audio/mpeg">
+    </audio>
+
     <!-- Contenedor para lirios continuos de fondo -->
     <div id="bg-lilies-container"></div>
 
@@ -326,6 +435,28 @@
                 Aquí encontrarás algunas canciones que son para ti, porque me suenan a ti y amo escucharlas pensando en ti. Espero que al escucharlas sientas lo mismo y me pienses de la misma forma. Si le das clic a cada una, te llevará directo a la canción para que puedas escucharla en este momento.
 
                 En la parte de abajo dejé algunas películas. Aunque al momento de escribir esto aún me faltaba ver algunas, si ya están en la lista es porque las vi y definitivamente creo que son nuestras. Espero que, al igual que a mí, te provoquen un bonito sentimiento.
+            </div>
+
+            <!-- Reproductor de Audio Integrado -->
+            <div class="custom-player-container">
+                <div class="player-header">
+                    <span>🎵 Yo siempre contesto</span>
+                    <span>♡</span>
+                </div>
+                <div class="player-controls">
+                    <button class="play-btn" id="play-btn" onclick="togglePlay()">▶</button>
+                    <div class="progress-wrapper">
+                        <input type="range" class="progress-bar" id="progress-bar" value="0" min="0" step="0.1" onchange="seekAudio()">
+                        <div class="time-display">
+                            <span id="current-time">0:00</span>
+                            <span id="duration-time">0:00</span>
+                        </div>
+                    </div>
+                    <div class="volume-wrapper">
+                        <span>🔊</span>
+                        <input type="range" class="volume-bar" id="volume-bar" value="80" min="0" max="100" oninput="setVolume()">
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -436,24 +567,26 @@
 
     <script>
         const lilies = ['Lirio.PNG', 'Lirio1.PNG', 'Lirio2.PNG', 'Lirio3.PNG', 'Lirio4.PNG', 'Lirio5.PNG'];
+        const audio = document.getElementById('bg-audio');
+        const playBtn = document.getElementById('play-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationTimeEl = document.getElementById('duration-time');
+        const volumeBar = document.getElementById('volume-bar');
 
-        // Iniciar lirios sutiles de fondo continuo
+        // Lirios de fondo
         function initBackgroundLilies() {
             const bgContainer = document.getElementById('bg-lilies-container');
-            
-            // Genera lirios espaciados suavemente
             setInterval(() => {
                 const img = document.createElement('img');
                 const randomLily = lilies[Math.floor(Math.random() * lilies.length)];
                 img.src = randomLily;
                 img.className = 'bg-ambient-lily';
                 
-                // Tamaño grande pero opacidad muy tenue
                 const size = 120 + Math.random() * 100;
                 img.style.width = size + 'px';
                 img.style.left = Math.random() * 90 + 'vw';
                 
-                // Variación sutil de velocidad
                 const duration = 16 + Math.random() * 8;
                 img.style.animationDuration = duration + 's';
 
@@ -471,17 +604,21 @@
             const intro = document.getElementById('intro-screen');
             const main = document.getElementById('main-content');
 
-            // 1. Lanzar ráfaga masiva de 120 lirios
+            // Iniciar Audio al abrir sobre
+            audio.volume = 0.8;
+            audio.play().then(() => {
+                playBtn.innerText = '❚❚';
+            }).catch(e => console.log('Autoplay prevenido:', e));
+
+            // Ráfaga masiva de lirios
             for (let i = 0; i < 120; i++) {
                 setTimeout(() => {
                     createLily();
                 }, i * 20);
             }
 
-            // 2. Ocultar el sobre primero
             intro.classList.add('hidden');
 
-            // 3. Pausa para los lirios antes de mostrar el contenido
             setTimeout(() => {
                 main.classList.add('visible');
             }, 2800);
@@ -518,6 +655,40 @@
             setTimeout(() => {
                 img.remove();
             }, 4500);
+        }
+
+        // Lógica del Reproductor de Audio
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                playBtn.innerText = '❚❚';
+            } else {
+                audio.pause();
+                playBtn.innerText = '▶';
+            }
+        }
+
+        audio.addEventListener('timeupdate', () => {
+            if (audio.duration) {
+                progressBar.max = audio.duration;
+                progressBar.value = audio.currentTime;
+                currentTimeEl.innerText = formatTime(audio.currentTime);
+                durationTimeEl.innerText = formatTime(audio.duration);
+            }
+        });
+
+        function seekAudio() {
+            audio.currentTime = progressBar.value;
+        }
+
+        function setVolume() {
+            audio.volume = volumeBar.value / 100;
+        }
+
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
         }
     </script>
 </body>
