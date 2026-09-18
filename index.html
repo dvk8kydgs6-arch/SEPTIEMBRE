@@ -68,7 +68,7 @@
             50% { opacity: 1; }
         }
 
-        /* Animación de Lirios Volando (Más lenta y suave) */
+        /* Animación de Lirios Volando */
         .flying-lily {
             position: fixed;
             pointer-events: none;
@@ -137,7 +137,7 @@
             z-index: 2;
         }
 
-        /* Decoraciones de fondo con mayor visibilidad */
+        /* Decoraciones de fondo */
         .bg-decor {
             position: absolute;
             pointer-events: none;
@@ -293,10 +293,11 @@
 
             <h1 class="letter-title">21 de Septiembre</h1>
             <div class="letter-body">
-                Hay fechas que no necesitan ruido para sentirse presentes. 
-                Aunque el tiempo o la distancia tengan su propio curso, quería dejarte este pequeño espacio en silencio.
+                Hola, mi niña. Estuve preparando este pequeño detalle desde hace un tiempo. No es algo grandísimo ni mucho menos físico, pero no podía dejar que este día pasara como si nada.
 
-                Sin presiones, sin expectativas. Solo un recordatorio sincero de lo que permanece guardado con respeto y aprecio.
+                Aquí encontrarás algunas canciones que son para ti, porque me suenan a ti y amo escucharlas pensando en ti. Espero que al escucharlas sientas lo mismo y me pienses de la misma forma. Si le das clic a cada una, te llevará directo a la canción para que puedas escucharla en este momento.
+
+                En la parte de abajo dejé algunas películas. Aunque al momento de escribir esto aún me faltaba ver algunas, si ya están en la lista es porque las vi y definitivamente creo que son nuestras. Espero que, al igual que a mí, te provoquen un bonito sentimiento.
             </div>
         </div>
 
@@ -412,14 +413,12 @@
             const intro = document.getElementById('intro-screen');
             const main = document.getElementById('main-content');
 
-            // Crear ráfaga progresiva de 45 lirios
             for (let i = 0; i < 45; i++) {
                 setTimeout(() => {
                     createLily();
-                }, i * 40); // Ligero desfase para efecto cascada/lluvia
+                }, i * 40);
             }
 
-            // Ocultar pantalla inicial y mostrar contenido
             intro.classList.add('hidden');
             main.classList.add('visible');
         }
